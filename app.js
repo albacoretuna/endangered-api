@@ -3,7 +3,6 @@ const path = require('path');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const index = require('./routes/index');
-const users = require('./routes/users');
 const app = express();
 
 // uncomment after placing your favicon in /public
@@ -12,7 +11,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', index);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -27,9 +25,9 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+  // send  error
   res.status(err.status || 500);
-  res.render('error');
+  res.send('error');
 });
 
 module.exports = app;
