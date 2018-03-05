@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const cloudinary = require('cloudinary');
 
-const { sample, get } = require('lodash');
+const { sample, get, isFinite } = require('lodash');
 const Promise = require('bluebird');
 
 // list of our images on cloudinary
@@ -51,7 +51,7 @@ const updateAvailableImages = async () => {
 updateAvailableImages();
 
 const findClosestRatio = (width, height, availableImages) => {
-  if (!width || !height || !availableImages[0]) return;
+  if (!isFinite(width) || !isFinite(height) || !availableImages[0]) return;
 
   const desiredRatio = parseFloat(width / height);
 
@@ -70,6 +70,13 @@ router.get('/', (req, res, next) => {
 
 router.get('/:width/:height', (req, res, next) => {
   let { width, height } = req.params;
+  width = parseInt(width, 10)
+  height = parseInt(height, 10)
+
+  if (!isFinite(width) || !isFinite(height)) {
+    return res.status(404).send('Invalid photo size');
+  }
+
   width = width > MAX_WIDTH ? MAX_WIDTH : width;
   height = height > MAX_HEIGHT ? MAX_HEIGHT : height;
 
@@ -94,6 +101,12 @@ const getRandomImage = availableImages =>
 
 router.get('/:width', (req, res, next) => {
   let { width } = req.params;
+  width = parseInt(width, 10)
+
+  if (!isFinite(width)) {
+    return res.status(404).send('Invalid photo width');
+  }
+
   width = width > MAX_WIDTH ? MAX_WIDTH : width;
 
   const imageUrl = cloudinary.url(getRandomImage(availableImages), {

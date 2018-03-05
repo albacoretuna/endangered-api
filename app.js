@@ -7,10 +7,10 @@ const app = express();
 const helmet = require('helmet');
 
 // uncomment after placing your favicon in /public
+app.use(helmet())
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(helmet())
 
 app.use('/', index);
 
